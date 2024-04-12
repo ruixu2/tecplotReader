@@ -510,6 +510,12 @@ class TecplotFile(construct.Container):
                     self.dataset_aux[i.name] = i.value.split(',')
                 else:
                     self.dataset_aux[i.name] = i.value
+    def get_data_by_var_name(self,izone,var_name):
+        vars=self.variables
+        if var_name not in vars:
+            raise Exception(f"{var_name} not in variables")
+        var_idx=vars.index(var_name)
+        return self.get_data(izone,var_idx)
 
     def get_data(self, izone: int, ivar: int):
         import time
@@ -565,7 +571,19 @@ class TecplotFile(construct.Container):
 
     def get_min(self, izone: int, ivar: int):
         return self.data[0].data[-1].min
+    def get_min_by_var_name(self,izone,var_name):
+        vars=self.variables
+        if var_name not in vars:
+            raise Exception(f"{var_name} not in variables")
+        var_idx=vars.index(var_name)
+        return self.get_min(izone,var_idx)
 
+    def get_max_by_var_name(self,izone,var_name):
+        vars=self.variables
+        if var_name not in vars:
+            raise Exception(f"{var_name} not in variables")
+        var_idx=vars.index(var_name)
+        return self.get_max(izone,var_idx)
     def get_max(self, izone: int, ivar: int):
         return self.data[0].data[-1].max
 
@@ -577,7 +595,8 @@ class TecplotFile(construct.Container):
 
 
 if __name__ == "__main__":
-    input_file = 'qPot_trj.tec'
+    # input_file = 'qPot_trj.tec'
+    input_file="test.plt"
     tec = TecplotFile(input_file, read_data=False)  # read data on demand
 
     # print a summery of the file
@@ -591,6 +610,5 @@ if __name__ == "__main__":
 
     # get data for first zone and first variable
     data = tec.get_data(0, 0)  # via API
-
     # get max value of the last variable of the first zone
     max_val = tec.get_max(0, -1)
